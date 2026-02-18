@@ -2,30 +2,63 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>High Score</title>
+<title>High Score | 고등학교 공부의 중심</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<header class="navbar">
-  <div class="logo">High Score</div>
+<header>
+  <h1>High Score</h1>
+  <p>입시 강의·문제집 비교 포털</p>
 </header>
 
-<section class="section">
+<nav>
+  <button onclick="showSection('portal')">홈</button>
+  <button onclick="showSection('recommend')">추천 시스템</button>
+  <button onclick="showSection('community')">커뮤니티</button>
+</nav>
+
+<main>
+
+<!-- 포털 섹션 -->
+<section id="portal" class="active">
   <h2>📚 과목 선택</h2>
 
-  <div class="subject-grid">
-    <a href="kor.html" class="subject-card">국어</a>
-    <a href="math.html" class="subject-card">수학</a>
-    <a href="eng.html" class="subject-card">영어</a>
-    <a href="inquiry.html" class="subject-card">탐구</a>
-    <a href="history.html" class="subject-card">한국사</a>
+  <div class="grid">
+    <div class="card">국어 (화법과작문 / 언어와매체)</div>
+    <div class="card">수학 (수1 / 수2 / 확통 / 미적분 / 기하)</div>
+    <div class="card">영어</div>
+    <div class="card">과학탐구 (물리 / 화학 / 생명 / 지구)</div>
+    <div class="card">사회탐구 (사문 / 생윤 / 윤사 / 정법)</div>
+    <div class="card">한국사</div>
   </div>
 </section>
 
-<footer>
-  <p>High Score | 고등학교 공부의 중심</p>
-</footer>
+<!-- 추천 시스템 -->
+<section id="recommend" class="hidden">
+  <h2>📊 알고리즘 추천</h2>
 
-</body>
-</html>
+  <label>과목 선택</label>
+  <select id="subject">
+    <option value="math">수학</option>
+    <option value="eng">영어</option>
+    <option value="kor">국어</option>
+    <option value="sci">과학탐구</option>
+    <option value="soc">사회탐구</option>
+    <option value="history">한국사</option>
+  </select>
+
+  <label>현재 등급 (1~9)</label>
+  <input type="number" id="grade" min="1" max="9">
+
+  <label>공부 고민</label>
+  <div>
+    <label><input type="radio" name="weakness" value="concept"> 개념 부족</label>
+    <label><input type="radio" name="weakness" value="speed"> 속도 부족</label>
+    <label><input type="radio" name="weakness" value="killer"> 킬러 어려움</label>
+  </div>
+
+  <button onclick="recommend()">추천 받기</button>
+
+  <div id="result"
+
