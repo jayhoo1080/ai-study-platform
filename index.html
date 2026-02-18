@@ -1,91 +1,94 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>Study Portal</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="script.js"></script>
 
-<title>High Score | 입시 포털</title>
-
-<!-- Pretendard 폰트 -->
-<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
-
-<link rel="stylesheet" href="style.css">
+  <!-- 폰트 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
 
-<header class="topbar">
-  <div class="container nav-inner">
-    <div class="logo">High Score</div>
+  <!-- 상단바 -->
+  <header class="header">
+    <div class="logo">STUDY PORTAL</div>
     <nav class="menu">
-      <a href="#">국어</a>
-      <a href="#">수학</a>
-      <a href="#">영어</a>
-      <a href="#">과탐</a>
-      <a href="#">사탐</a>
-      <a href="#">한국사</a>
-      <a href="#">커뮤니티</a>
+      <a href="#" onclick="loadSubject('국어')">국어</a>
+      <a href="#" onclick="loadSubject('수학')">수학</a>
+      <a href="#" onclick="loadSubject('영어')">영어</a>
+      <a href="#" onclick="loadSubject('과학탐구')">과탐</a>
+      <a href="#" onclick="loadSubject('사회탐구')">사탐</a>
+      <a href="#" onclick="loadSubject('한국사')">한국사</a>
+      <a href="#community">커뮤니티</a>
     </nav>
-  </div>
-</header>
+  </header>
 
-<section class="hero">
-  <div class="container">
-    <h1>2027 수능 대비</h1>
-    <p>AI 기반 학습 분석 플랫폼</p>
-    <button onclick="scrollToRecommend()">학습 분석 시작하기</button>
-  </div>
-</section>
+  <!-- 메인 히어로 -->
+  <section class="hero">
+    <h1>나에게 맞는 수능 전략 찾기</h1>
+    <p>성적과 약점을 입력하면 추천 강사와 문제집을 알려줍니다.</p>
+  </section>
 
-<section class="subjects container">
-  <h2>📚 과목별 바로가기</h2>
-  <div class="card-grid">
-    <div class="card">국어<span>화법과작문 · 언어와매체</span></div>
-    <div class="card">수학<span>수1 · 수2 · 확통 · 미적분 · 기하</span></div>
-    <div class="card">영어</div>
-    <div class="card">과학탐구<span>물리 · 화학 · 생명 · 지구</span></div>
-    <div class="card">사회탐구<span>사회문화 · 생활과윤리 · 윤리와사상 · 정치와법</span></div>
-    <div class="card">한국사</div>
-  </div>
-</section>
+  <!-- 추천 영역 -->
+  <section id="recommend" class="recommend-box">
+    <h2>📊 학습 분석</h2>
 
-<section class="recommend container" id="recommend">
-  <h2>📊 맞춤 학습 분석</h2>
+    <label>과목 선택</label>
+    <select id="subject">
+      <option value="국어">국어</option>
+      <option value="수학">수학</option>
+      <option value="영어">영어</option>
+      <option value="과학탐구">과학탐구</option>
+      <option value="사회탐구">사회탐구</option>
+      <option value="한국사">한국사</option>
+    </select>
 
-  <select id="subject">
-    <option value="국어">국어</option>
-    <option value="수학">수학</option>
-    <option value="영어">영어</option>
-    <option value="과학탐구">과학탐구</option>
-    <option value="사회탐구">사회탐구</option>
-    <option value="한국사">한국사</option>
-  </select>
+    <label>현재 등급</label>
+    <input type="number" id="grade" min="1" max="9" placeholder="1~9">
 
-  <input type="number" id="grade" placeholder="현재 등급 (1~9)" min="1" max="9">
+    <label>약점 유형</label>
+    <div class="radio-group">
+      <label><input type="radio" name="weakness" value="개념"> 개념 부족</label>
+      <label><input type="radio" name="weakness" value="킬러"> 킬러문항</label>
+      <label><input type="radio" name="weakness" value="시간"> 시간 부족</label>
+    </div>
 
-  <div class="radio-group">
-    <label><input type="radio" name="weakness" value="개념 부족"> 개념 부족</label>
-    <label><input type="radio" name="weakness" value="시간 부족"> 시간 부족</label>
-    <label><input type="radio" name="weakness" value="킬러 문제 약함"> 킬러 문제 약함</label>
-  </div>
+    <button class="analyze-btn" onclick="recommend()">추천 보기</button>
 
-  <button onclick="recommend()">추천 받기</button>
+    <div id="result" class="result-box hidden"></div>
+  </section>
 
-  <div id="result" class="result hidden"></div>
-</section>
+  <!-- 수험생 커뮤니티 -->
+  <section id="community" class="community">
+    <h2>💬 수험생 커뮤니티</h2>
+    <div class="mini-home">
+      <div class="profile-card">
+        <h3>📌 오늘의 인기 글</h3>
+        <ul>
+          <li>수학 2등급 → 1등급 공부법</li>
+          <li>영어 단어 암기 팁 공유</li>
+          <li>과탐 개념 정리 루틴</li>
+        </ul>
+      </div>
 
-<section class="community container">
-  <h2>💬 수험생 미니홈피</h2>
-  <input type="text" id="post-input" placeholder="오늘의 공부 기록을 남겨보세요">
-  <button onclick="addPost()">작성</button>
-  <ul id="post-list"></ul>
-</section>
+      <div class="profile-card">
+        <h3>🔥 실시간 게시판</h3>
+        <ul>
+          <li>모의고사 난이도 어땠어?</li>
+          <li>지금부터 시작해도 될까...</li>
+          <li>국어 독서 어떻게 공부해?</li>
+        </ul>
+      </div>
+    </div>
+  </section>
 
-<footer>
-  <p>출처: 각 교육기관 공식 홈페이지</p>
-  <p>High Score는 비공식 학습 분석 플랫폼입니다.</p>
-</footer>
+  <footer class="footer">
+    © 2026 Study Portal. All rights reserved.
+  </footer>
 
-<script src="script.js"></script>
 </body>
 </html>
