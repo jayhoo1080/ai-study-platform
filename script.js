@@ -1,77 +1,106 @@
-const teacherData = {
-  "수학": ["현우진", "한석원", "정승제"],
-  "영어": ["조정식", "이명학"],
-  "국어": ["김동욱", "유대종"],
-  "과학탐구": ["배기범", "한종철"],
-  "사회탐구": ["이기상", "임정환"],
-  "한국사": ["최태성"]
-};
-
-const platformLinks = {
-  "EBS": "https://www.ebsi.co.kr",
-  "메가스터디": "https://www.megastudy.net",
-  "대성마이맥": "https://www.mimacstudy.com",
-  "이투스": "https://www.etoos.com"
+const subjectData = {
+  "수학": {
+    teachers: [
+      { name: "현우진", link: "https://www.megastudy.net" },
+      { name: "한석원", link: "https://www.mimacstudy.com" }
+    ],
+    books: ["자이스토리 수학", "마더텅 수학", "쎈 수학"]
+  },
+  "영어": {
+    teachers: [
+      { name: "조정식", link: "https://www.megastudy.net" },
+      { name: "이명학", link: "https://www.mimacstudy.com" }
+    ],
+    books: ["자이스토리 영어", "수능특강 영어"]
+  },
+  "국어": {
+    teachers: [
+      { name: "김동욱", link: "https://www.megastudy.net" },
+      { name: "유대종", link: "https://www.mimacstudy.com" }
+    ],
+    books: ["마더텅 국어", "수능특강 국어"]
+  },
+  "과학탐구": {
+    teachers: [
+      { name: "배기범", link: "https://www.megastudy.net" },
+      { name: "한종철", link: "https://www.mimacstudy.com" }
+    ],
+    books: ["자이스토리 과탐", "완자 과학"]
+  },
+  "사회탐구": {
+    teachers: [
+      { name: "이기상", link: "https://www.mimacstudy.com" },
+      { name: "임정환", link: "https://www.megastudy.net" }
+    ],
+    books: ["자이스토리 사탐", "수능특강 사탐"]
+  },
+  "한국사": {
+    teachers: [
+      { name: "최태성", link: "https://www.ebsi.co.kr" }
+    ],
+    books: ["수능특강 한국사"]
+  }
 };
 
 let teacherRatings = {};
+
+function loadSubject(subject) {
+  document.getElementById("subject").value = subject;
+  scrollToRecommend();
+  recommend();
+}
 
 function scrollToRecommend() {
   document.getElementById("recommend").scrollIntoView({ behavior: "smooth" });
 }
 
-document.querySelectorAll(".card").forEach(card => {
-  card.addEventListener("click", () => {
-    const subject = card.childNodes[0].nodeValue.trim();
-    document.getElementById("subject").value = subject;
-    scrollToRecommend();
-  });
-});
-
 function recommend() {
   const subject = document.getElementById("subject").value;
-  const grade = parseInt(document.getElementById("grade").value);
+  const grade = parseInt(document.getElementById("grade").value) || 3;
   const weakness = document.querySelector('input[name="weakness"]:checked');
-
-  if (!grade || !weakness) {
-    alert("등급과 약점을 선택하세요.");
-    return;
-  }
 
   let strategy = "";
   if (grade <= 2) strategy = "킬러 대비 + 실전 모의고사 반복";
   else if (grade <= 4) strategy = "개념 정리 + 기출 분석";
   else strategy = "개념 반복 + 유형 정복";
 
-  let teachers = teacherData[subject] || [];
+  const data = subjectData[subject];
+  if (!data) return;
 
-  let teacherHTML = teachers.map(t => {
-    if (!teacherRatings[t]) teacherRatings[t] = [];
+  let teacherHTML = data.teachers.map(t => {
+    if (!teacherRatings[t.name]) teacherRatings[t.name] = [];
 
-    let avg = teacherRatings[t].length
-      ? (teacherRatings[t].reduce((a,b)=>a+b,0) / teacherRatings[t].length).toFixed(1)
+    let avg = teacherRatings[t.name].length
+      ? (teacherRatings[t.name].reduce((a,b)=>a+b,0) / teacherRatings[t.name].length).toFixed(1)
       : "평가 없음";
 
     return `
-      <div style="background:white;padding:15px;border-radius:15px;margin:12px 0;
+      <div style="background:white;padding:15px;border-radius:15px;margin:15px 0;
                   box-shadow:0 6px 20px rgba(0,0,0,0.05);">
 
-        <b onclick="searchTeacher('${t}')"
-           style="cursor:pointer;color:#6c63ff;">
-           👨‍🏫 ${t} 강사
-        </b>
+        <b style="font-size:16px;">👨‍🏫 ${t.name} 강사</b>
 
         <div style="margin-top:8px;font-size:13px;">
           ⭐ 평균 평점: ${avg}
         </div>
 
-        <div style="margin-top:8px;">
-          <input type="number" min="1" max="5" id="rating-${t}"
+        <div style="margin-top:10px;">
+          <a href="${t.link}" target="_blank"
+             style="padding:8px 14px;background:#6c63ff;
+                    color:white;border-radius:10px;
+                    text-decoration:none;font-size:13px;">
+            강의 보러가기
+          </a>
+        </div>
+
+        <div style="margin-top:10px;">
+          <input type="number" min="1" max="5"
+                 id="rating-${t.name}"
                  placeholder="1~5점"
                  style="width:60px;padding:5px;border-radius:8px;border:1px solid #ddd;">
-          <button onclick="rateTeacher('${t}')"
+          <button onclick="rateTeacher('${t.name}')"
                   style="padding:5px 10px;border:none;border-radius:8px;
-                         background:#6c63ff;color:white;cursor:pointer;">
+                         background:#444;color:white;cursor:pointer;">
             평가
           </button>
         </div>
@@ -79,27 +108,19 @@ function recommend() {
     `;
   }).join("");
 
-  let platformHTML = Object.keys(platformLinks).map(name =>
-    `<a href="${platformLinks[name]}" target="_blank"
-       style="display:inline-block;margin:8px 10px;padding:10px 18px;
-       background:#6c63ff;color:white;border-radius:20px;
-       text-decoration:none;font-size:14px;">
-       ${name} 바로가기
-     </a>`
+  let bookHTML = data.books.map(b =>
+    `<li style="margin:5px 0;">📘 ${b}</li>`
   ).join("");
 
   document.getElementById("result").innerHTML =
-    `<b>${subject}</b><br>
-     현재 등급: ${grade}등급<br>
-     약점: ${weakness.value}<br><br>
+    `<h3>${subject} 분석 결과</h3>
      📌 추천 전략: ${strategy}<br><br>
 
-     <b>🔥 추천 강사</b><br>
+     <h4>🔥 추천 강사</h4>
      ${teacherHTML}
 
-     <br><br>
-     <b>🎓 인강 플랫폼 바로가기</b><br>
-     ${platformHTML}
+     <h4>📚 추천 문제집</h4>
+     <ul>${bookHTML}</ul>
     `;
 
   document.getElementById("result").classList.remove("hidden");
@@ -114,25 +135,4 @@ function rateTeacher(name) {
 
   teacherRatings[name].push(value);
   recommend();
-}
-
-function searchTeacher(name) {
-  const query = encodeURIComponent(name + " 강사");
-  window.open("https://search.naver.com/search.naver?query=" + query, "_blank");
-}
-
-function addPost() {
-  const input = document.getElementById("post-input");
-  const list = document.getElementById("post-list");
-
-  if (input.value !== "") {
-    const li = document.createElement("li");
-    li.innerHTML = input.value + 
-    `<br><br>
-     <button onclick="this.parentElement.remove()" 
-     style="margin-top:10px;background:#eee;border:none;padding:5px 10px;border-radius:8px;cursor:pointer;">
-     삭제</button>`;
-    list.appendChild(li);
-    input.value = "";
-  }
 }
